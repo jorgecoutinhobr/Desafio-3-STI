@@ -19,5 +19,5 @@ Este é um projeto em Ruby que calcula o Coeficiente de Rendimento (CR) dos alun
 3. Execute o programa 
 
    ```shell
-   Ruby main.rb
+   ruby main.rb
 4. O programa calculará o CR dos alunos e exibirá o resultado na tela, incluindo a média de CR por curso.
