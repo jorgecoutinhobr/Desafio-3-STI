@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require './aluno'
 
 class Curso
   attr_accessor :alunos, :codigo

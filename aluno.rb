@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require './curso'
 
 class Aluno
   attr_accessor :matricula, :curso
