@@ -1,79 +1,42 @@
-require './curso'
+# frozen_string_literal: true
+require 'csv'
 require './aluno'
+require './curso'
 
 class Universidade
   attr_accessor :alunos, :cursos
+  PATH = 'database/notas.csv'.freeze
+
   def initialize
-    @alunos = []
-    @cursos = []
+    @alunos = {}
+    @cursos = {}
   end
 
-  def adicionar_aluno(aluno)
-    @alunos.push(aluno)
-  end
+  def carregar_alunos
+    CSV.foreach(PATH, headers: true, header_converters: :symbol) do |linha|
+      matricula = linha[:matricula]
+      cod_disciplina = linha[:cod_disciplina]
+      cod_curso = linha[:cod_curso]
+      nota = linha[:nota].to_f
+      carga_horaria = linha[:carga_horaria].to_f
 
-  def adicionar_curso(curso)
-    @cursos.push(curso)
-  end
+      aluno = @alunos[matricula] ||= Aluno.new(matricula)
+      aluno.adicionar_curso({ nota: nota, carga_horaria: carga_horaria })
 
-  # def calc_alunos
-  #   @alunos.each do |aluno|
-  #     print ' '*13
-  #     puts "#{aluno.matricula}"
-  #     puts "#{aluno.historicos['NOTA']}"
-  #     aluno.historicos do |v|
-  #       puts "-#{v['NOTA']}-"
-  #     end
-  #   end
-  # end
-
-
-  def calcular_notas_por_matricula_e_curso
-    notas_por_matricula_e_curso = {}
-    @cursos.each do |curso|
-      curso.alunos.each do |aluno|
-        matricula = aluno["MATRICULA"]
-        nota = aluno["NOTA"].to_i
-        ch = aluno["CARGA_HORARIA"].to_i
-        cod_disciplina = aluno["COD_DISCIPLINA"]
-
-        notas_por_matricula_e_curso[matricula] ||= {}
-        notas_por_matricula_e_curso[matricula][curso] ||= []
-
-        notas_por_matricula_e_curso[matricula][curso] << {ch: ch, nota: nota, cod_disciplina: cod_disciplina}
-      end
+      curso = @cursos[cod_curso] ||= Curso.new(cod_curso)
+      curso.adicionar_aluno(aluno) unless curso.alunos.include?(aluno)
     end
-    notas_por_matricula_e_curso
   end
 
-  def calcular_media_por_matricula_e_curso
-    notas_por_matricula_e_curso = calcular_notas_por_matricula_e_curso
-    media_por_matricula_e_curso = {}
-
-    notas_por_matricula_e_curso.each do |matricula, cursos|
-      media_por_matricula_e_curso[matricula] = {}
-      cursos.each do |curso, notas|
-        total_notas = notas.sum { |nota_info| nota_info[:nota] * nota_info[:ch] }
-        total_carga_horaria = notas.sum { |nota_info| nota_info[:ch] }
-
-        media = total_notas / total_carga_horaria
-
-        media_por_matricula_e_curso[matricula][curso] = media
-      end
+  def print
+    puts "------- O CR dos alunos é: --------"
+    @alunos.each do |matricula, aluno|
+      puts "#{matricula}  -  #{aluno.calcular_cr.round(2)}"
     end
-    media_por_matricula_e_curso
-  end
 
-  def media_final
-    media_por_curso = {}
-    media_por_matricula_e_curso = calcular_media_por_matricula_e_curso
-    media_por_matricula_e_curso.each do |_, cursos|
-      cursos.each do |curso, media|
-        media_por_curso[curso] ||= []
-        media_por_curso[curso] << media
-      end
+    puts "----- Média de CR dos cursos ------"
+    @cursos.each do |codigo, curso|
+      puts "#{codigo}  -  #{curso.media_cr.round(2)}"
     end
-    media_por_curso
   end
 end
-

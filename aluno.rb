@@ -1,19 +1,25 @@
+# frozen_string_literal: true
+require './curso'
+
 class Aluno
-  attr_accessor :matricula, :historicos
-  def initialize(matricula, historico)
+  attr_accessor :matricula, :curso
+
+  def initialize matricula
     @matricula = matricula
-    @historicos = historico
+    @cursos = []
   end
 
-  def calcular_cr_aluno
-    numerador = 0
-    denominador = 0
-    @historicos.each do |historico|
-      nota = historico['NOTA'].to_i
-      horas = historico['CARGA_HORARIA'].to_i
-      numerador += (nota*horas)
-      denominador += horas
+  def adicionar_curso curso
+    @cursos << curso
+  end
+
+  def calcular_cr
+    pontos = 0.0
+    horas = 0
+    @cursos.each do |curso|
+      pontos += curso[:nota] * curso[:carga_horaria]
+      horas += curso[:carga_horaria]
     end
-    numerador/denominador
+    pontos / horas
   end
 end

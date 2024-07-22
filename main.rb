@@ -19,14 +19,14 @@ Printer.imprimir_cr_alunos(uff.alunos)
 Printer.imprimir_cr_cursos(uff.media_final)
 
 
-uff.media_final.each do |c, v|
-  puts "#{c.cod_curso} - #{v}"
-end
-puts '=================================================='
-# uff.calcular_media_por_matricula_e_curso.each do |c, v|
-#   print "#{c} - "
-#   v.each do |p, l|
-#     print "(#{p.cod_curso} #{l}) "
-#   end
-#   print "\n"
+# uff.media_final.each do |c, v|
+#   puts "#{c.cod_curso} - #{v}"
 # end
+puts '=================================================='
+uff.calcular_media_por_matricula_e_curso.each do |c, v|
+  print "#{c} - "
+  v.each do |p, l|
+    print "(#{p.cod_curso} #{l}) "
+  end
+  print "\n"
+end
